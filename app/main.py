@@ -26,7 +26,9 @@ def root():
 def get_item(item_id: int):
     if item_id not in ITEMS:
         raise HTTPException(status_code=404, detail="Item not found")
-    return ITEMS[item_id]
+    item = ITEMS[item_id]
+    # ⚠️ 破壊的変更: キー名を "price" → "cost" に変更（仕様変更のつもりでやりがち）
+    return {"id": item["id"], "name": item["name"], "cost": item["price"]}
 
 
 @app.get("/items", response_model=list[Item])
