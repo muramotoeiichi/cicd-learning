@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python をセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: 依存パッケージをインストール
+        run: pip install -r requirements.txt
+
+      - name: テストを実行
+        run: python -m pytest -v
+
+  deploy:
+    needs: test          # ← test が成功したときだけ実行
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Render へデプロイ
+        run: |
+          echo "✅ テスト通過！デプロイを開始します..."
+          # 後で Render の Deploy Hook URL を追加する
+          # curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          echo "🚀 デプロイ完了（現在はダミー）"
